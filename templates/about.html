@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Dhyan-CERT & Study Tracker</title>
+    <style>
+        :root {
+            --orange: orange;
+            --yellow: yellow;
+            --gold: gold;
+            --azure: azure;
+            --whitesmoke: whitesmoke;
+            --gray: gray;
+            --yellowgreen: yellowgreen;
+            --black: black;
+            --white: white;
+            --border-light: rgb(216, 210, 210);
+
+            --radius-sm: 6px;
+            --radius: 12px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.14);
+            --transition: 0.2s ease;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: var(--black);
+            line-height: 1.5;
+        }
+
+        /* ---------- Navigation ---------- */
+        .logo {
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: linear-gradient(45deg, var(--orange), var(--yellow));
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li {
+            display: inline;
+            padding-left: 30px;
+            font-size: 20px;
+        }
+
+        a {
+            color: var(--black);
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity var(--transition);
+        }
+
+        nav a:hover {
+            opacity: 0.65;
+        }
+
+        /* ---------- Hero ---------- */
+        main {
+            padding: 60px 20px;
+            text-align: center;
+            color: var(--gold);
+            background-color: var(--azure);
+            border: 1px solid var(--border-light);
+            text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.12);
+        }
+
+        .hero-title {
+            font-size: clamp(2.2rem, 6vw, 4.2rem);
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .hero-amp {
+            margin: 4px 0;
+            font-size: clamp(1.5rem, 4vw, 2.4rem);
+            color: var(--gold);
+        }
+
+        .hero-sub {
+            font-size: clamp(1.7rem, 4.5vw, 2.8rem);
+            font-weight: 600;
+        }
+
+        .hero-tagline {
+            max-width: 800px;
+            margin: 12px auto 0;
+            font-size: clamp(1rem, 2vw, 1.35rem);
+            color: var(--black);
+            text-shadow: none;
+        }
+
+        /* ---------- Content ---------- */
+        .container {
+            flex: 1;
+            width: min(1000px, 92vw);
+            margin: 40px auto;
+        }
+
+        .card {
+            margin-bottom: 24px;
+            padding: 28px;
+            background-color: var(--whitesmoke);
+            border: 2px solid var(--gray);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--transition), box-shadow var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        h2 {
+            margin-bottom: 16px;
+            font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+            text-align: center;
+        }
+
+        .card p {
+            margin-bottom: 14px;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        .card p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* ---------- Feature grid ---------- */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .feature-box {
+            padding: 22px 18px;
+            text-align: center;
+            background-color: var(--whitesmoke);
+            border: 2px solid var(--gray);
+            border-radius: var(--radius);
+            transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+        }
+
+        .feature-box:hover {
+            transform: translateY(-5px);
+            border-color: var(--orange);
+            box-shadow: var(--shadow);
+        }
+
+        .feature-icon {
+            margin-bottom: 10px;
+            font-size: 38px;
+        }
+
+        .feature-box h3 {
+            margin-bottom: 8px;
+            font-size: 20px;
+        }
+
+        .feature-box p {
+            font-size: 15px;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        /* ---------- Values list ---------- */
+        .values-list {
+            margin-top: 15px;
+            list-style: none;
+        }
+
+        .values-list li {
+            display: block;
+            padding: 14px 0;
+            font-size: 18px;
+            border-bottom: 1px dashed var(--border-light);
+        }
+
+        .values-list li:first-child {
+            padding-top: 0;
+        }
+
+        .values-list li:last-child {
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        /* ---------- Call to action ---------- */
+        .cta-section {
+            margin: 40px 0 20px;
+            text-align: center;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--yellowgreen);
+            background-color: var(--yellow);
+            border: 2px solid var(--black);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: transform var(--transition), background-color var(--transition), color var(--transition), box-shadow var(--transition);
+        }
+
+        .cta-btn:hover {
+            color: var(--yellow);
+            background-color: var(--yellowgreen);
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .cta-btn:active {
+            transform: translateY(0) scale(0.99);
+        }
+
+        a:focus-visible,
+        .cta-btn:focus-visible {
+            outline: 3px solid var(--gold);
+            outline-offset: 3px;
+        }
+
+        /* ---------- Footer ---------- */
+        footer {
+            padding: 18px 20px;
+            font-size: 15px;
+            text-align: center;
+            background: linear-gradient(45deg, var(--orange), var(--yellow));
+            border-top: 1px solid var(--border-light);
+        }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 640px) {
+            .logo {
+                font-size: 24px;
+            }
+
+            nav {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            li {
+                padding-left: 14px;
+                font-size: 16px;
+            }
+
+            main {
+                padding: 40px 16px;
+            }
+
+            .container {
+                width: 92vw;
+                margin: 28px auto;
+            }
+
+            .card {
+                padding: 20px 16px;
+            }
+
+            .card p {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Top Navigation -->
+    <nav>
+        <div class="logo">Dhyan</div>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/feedback">FeedBack</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Hero Banner -->
+    <main>
+        <div class="hero-title">About Dhyan-CERT</div>
+        <div class="hero-amp">&</div>
+        <div class="hero-sub">Study Tracker</div>
+        <div class="hero-tagline">Cultivating focus, consistency, and purposeful achievement in your daily journey.</div>
+    </main>
+
+    <!-- Content Area -->
+    <div class="container">
+        <!-- Origin & Philosophy -->
+        <div class="card">
+            <h2>Our Purpose & Philosophy</h2>
+            <p>
+                The word <strong>"Dhyan"</strong> (ध्यान) embodies meditative concentration, profound mindfulness, and
+                undivided attention. In today's fast-paced world, staying disciplined across academic workloads, professional
+                certifications, and daily life routines can quickly become overwhelming.
+            </p>
+            <p>
+                <strong>Dhyan-CERT & Study Tracker</strong> was created to be your clean, intuitive, and distraction-free
+                sanctuary. Whether you are working toward high-stakes examinations, acquiring industry credentials, or balancing
+                household tasks, Dhyan helps you stay accountable to your deadlines and goals.
+            </p>
+        </div>
+
+        <!-- Core Tracker Modules -->
+        <div class="card">
+            <h2>What You Can Track</h2>
+            <div class="features-grid">
+                <div class="feature-box">
+                    <div class="feature-icon">📚</div>
+                    <h3>Academia</h3>
+                    <p>Organize assignments, exams, research projects, and lab work mapped directly to subjects and due dates.</p>
+                </div>
+                <div class="feature-box">
+                    <div class="feature-icon">📜</div>
+                    <h3>Certification</h3>
+                    <p>Log professional certs, syllabus outlines, target skills to master, and completion timelines.</p>
+                </div>
+                <div class="feature-box">
+                    <div class="feature-icon">🧹</div>
+                    <h3>Chores</h3>
+                    <p>Stay on top of essential household responsibilities, personal maintenance, and daily routines.</p>
+                </div>
+                <div class="feature-box">
+                    <div class="feature-icon">📌</div>
+                    <h3>Other Goals</h3>
+                    <p>Track general goals, custom side projects, hobbies, and personal milestones with flexible deadlines.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Principles -->
+        <div class="card">
+            <h2>Why Choose Dhyan?</h2>
+            <ul class="values-list">
+                <li>
+                    <strong>⚡ Simplicity First:</strong> No convoluted setups or clutter—just select your task category, write what matters, and set your target.
+                </li>
+                <li>
+                    <strong>🎯 Deadline-Driven Accountability:</strong> Time-stamped scheduling keeps your priorities front and center so nothing falls through the cracks.
+                </li>
+                <li>
+                    <strong>🔄 Holistic Daily Balance:</strong> Bridge the gap between study, career-advancing certifications, and real-life tasks under one roof.
+                </li>
+            </ul>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="cta-section">
+            <a href="/" class="cta-btn">Start Tracking Today</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        Dhyan-CERT & Study Tracker &copy; 2026 &mdash; Built with Focus & Clarity
+    </footer>
+</body>
+
+</html>

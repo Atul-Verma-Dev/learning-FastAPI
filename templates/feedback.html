@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback - Dhyan-CERT & Study Tracker</title>
+    <style>
+        :root {
+            --orange: orange;
+            --yellow: yellow;
+            --gold: gold;
+            --azure: azure;
+            --whitesmoke: whitesmoke;
+            --gray: gray;
+            --yellowgreen: yellowgreen;
+            --black: black;
+            --white: white;
+            --antiquewhite: antiquewhite;
+            --border-light: rgb(216, 210, 210);
+
+            --radius-sm: 6px;
+            --radius: 12px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.14);
+            --transition: 0.2s ease;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: var(--black);
+            line-height: 1.5;
+        }
+
+        /* ---------- Navigation ---------- */
+        .logo {
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: linear-gradient(45deg, var(--orange), var(--yellow));
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li {
+            display: inline;
+            padding-left: 30px;
+            font-size: 20px;
+        }
+
+        a {
+            color: var(--black);
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity var(--transition);
+        }
+
+        nav a:hover {
+            opacity: 0.65;
+        }
+
+        /* ---------- Hero ---------- */
+        main {
+            padding: 60px 20px;
+            text-align: center;
+            color: var(--gold);
+            background-color: var(--azure);
+            border: 1px solid var(--border-light);
+            text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.12);
+        }
+
+        .hero-title {
+            font-size: clamp(2.2rem, 6vw, 4.2rem);
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .hero-amp {
+            margin: 4px 0;
+            font-size: clamp(1.5rem, 4vw, 2.4rem);
+            color: var(--gold);
+        }
+
+        .hero-sub {
+            font-size: clamp(1.7rem, 4.5vw, 2.8rem);
+            font-weight: 600;
+        }
+
+        .hero-tagline {
+            max-width: 800px;
+            margin: 12px auto 0;
+            font-size: clamp(1rem, 2vw, 1.35rem);
+            color: var(--black);
+            text-shadow: none;
+        }
+
+        /* ---------- Content ---------- */
+        .container {
+            flex: 1;
+            width: min(1000px, 92vw);
+            margin: 40px auto;
+        }
+
+        .card {
+            margin-bottom: 24px;
+            padding: 28px;
+            background-color: var(--whitesmoke);
+            border: 2px solid var(--gray);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--transition), box-shadow var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        h2 {
+            margin-bottom: 16px;
+            font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+            text-align: center;
+        }
+
+        .card p {
+            margin-bottom: 14px;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        .card p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* ---------- Form ---------- */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-top: 8px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label,
+        .label {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        input,
+        select,
+        textarea,
+        button {
+            font: inherit;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 12px;
+            color: var(--black);
+            background-color: var(--white);
+            border: 2px solid var(--gray);
+            border-radius: var(--radius-sm);
+            outline: none;
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--orange);
+            box-shadow: 0 0 0 3px rgba(255, 165, 0, 0.25);
+        }
+
+        textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+
+        .required {
+            color: var(--orange);
+        }
+
+        /* ---------- Star rating ---------- */
+        .rating {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: center;
+        }
+
+        .rating label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            font-size: 17px;
+            font-weight: 500;
+            background-color: var(--white);
+            border: 2px solid var(--gray);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: border-color var(--transition), background-color var(--transition), box-shadow var(--transition);
+        }
+
+        .rating label:hover {
+            border-color: var(--orange);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .rating input[type="radio"] {
+            accent-color: var(--orange);
+            cursor: pointer;
+        }
+
+        .rating input[type="radio"]:checked + span {
+            font-weight: 700;
+        }
+
+        /* ---------- Buttons ---------- */
+        .submit-btn {
+            display: block;
+            padding: 12px 32px;
+            margin: 6px auto 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--yellowgreen);
+            background-color: var(--yellow);
+            border: 2px solid var(--black);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: transform var(--transition), background-color var(--transition), color var(--transition), box-shadow var(--transition);
+        }
+
+        .submit-btn:hover {
+            color: var(--yellow);
+            background-color: var(--yellowgreen);
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0) scale(0.99);
+        }
+
+        a:focus-visible,
+        button:focus-visible {
+            outline: 3px solid var(--gold);
+            outline-offset: 3px;
+        }
+
+        #form-status {
+            margin-top: 6px;
+            font-size: 17px;
+            font-weight: 600;
+            text-align: center;
+            color: var(--yellowgreen);
+        }
+
+        #form-status:empty {
+            display: none;
+        }
+
+        /* ---------- Footer ---------- */
+        footer {
+            padding: 18px 20px;
+            font-size: 15px;
+            text-align: center;
+            background: linear-gradient(45deg, var(--orange), var(--yellow));
+            border-top: 1px solid var(--border-light);
+        }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 640px) {
+            .logo {
+                font-size: 24px;
+            }
+
+            nav {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            li {
+                padding-left: 14px;
+                font-size: 16px;
+            }
+
+            main {
+                padding: 40px 16px;
+            }
+
+            .container {
+                width: 92vw;
+                margin: 28px auto;
+            }
+
+            .card {
+                padding: 20px 16px;
+            }
+
+            .submit-btn {
+                width: 100%;
+                padding: 12px 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Top Navigation -->
+    <nav>
+        <div class="logo">Dhyan</div>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/feedback">FeedBack</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Hero Banner -->
+    <main>
+        <div class="hero-title">Share Your Feedback</div>
+        <div class="hero-amp">&</div>
+        <div class="hero-sub">Help Dhyan Grow</div>
+        <div class="hero-tagline">Tell us what's working, what's missing, and how we can make your study journey smoother.</div>
+    </main>
+
+    <!-- Content Area -->
+    <div class="container">
+        <div class="card">
+            <h2>We'd Love to Hear From You</h2>
+            <p>
+                Whether you have a feature request, found something confusing, or simply want to say thanks,
+                your feedback shapes the future of Dhyan-CERT &amp; Study Tracker. Fill in the form below and
+                let us know what's on your mind.
+            </p>
+
+            <form id="feedback-form" novalidate>
+                <div class="field">
+                    <label for="name">Name <span class="required">*</span></label>
+                    <input type="text" id="name" name="name" placeholder="Enter your name" required>
+                </div>
+
+                <div class="field">
+                    <label for="email">Email <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+
+                <div class="field">
+                    <label for="category">What is your feedback about?</label>
+                    <select id="category" name="category">
+                        <option value="General">General</option>
+                        <option value="Academia">Academia Tracker</option>
+                        <option value="Certification">Certification Tracker</option>
+                        <option value="Chore">Chore Tracker</option>
+                        <option value="Bug">Report a Bug</option>
+                        <option value="Feature">Feature Request</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <span class="label" id="rating-label">How would you rate your experience?</span>
+                    <div class="rating" role="radiogroup" aria-labelledby="rating-label">
+                        <label><input type="radio" name="rating" value="1"><span>😞 1</span></label>
+                        <label><input type="radio" name="rating" value="2"><span>🙁 2</span></label>
+                        <label><input type="radio" name="rating" value="3"><span>😐 3</span></label>
+                        <label><input type="radio" name="rating" value="4"><span>🙂 4</span></label>
+                        <label><input type="radio" name="rating" value="5"><span>🤩 5</span></label>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="message">Your Feedback <span class="required">*</span></label>
+                    <textarea id="message" name="message" rows="6" placeholder="Tell us what you think..." required></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">Send Feedback</button>
+                <div id="form-status" role="status" aria-live="polite"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        Dhyan-CERT & Study Tracker &copy; 2026 &mdash; Built with Focus & Clarity
+    </footer>
+
+    <script>
+        const form = document.getElementById("feedback-form");
+        const status = document.getElementById("form-status");
+
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            if (!form.checkValidity()) {
+                status.textContent = "Please fill in your name, email, and feedback.";
+                status.style.color = "var(--orange)";
+                form.reportValidity();
+                return;
+            }
+
+            status.textContent = "Thank you! Your feedback has been received.";
+            status.style.color = "var(--yellowgreen)";
+            form.reset();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dhyan-CERT & Study Tracker</title>
+    <style>
+        :root {
+            --orange: orange;
+            --yellow: yellow;
+            --gold: gold;
+            --azure: azure;
+            --whitesmoke: whitesmoke;
+            --gray: gray;
+            --yellowgreen: yellowgreen;
+            --black: black;
+            --white: white;
+            --antiquewhite: antiquewhite;
+            --border-light: rgb(216, 210, 210);
+
+            --radius-sm: 6px;
+            --radius: 12px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.14);
+            --transition: 0.2s ease;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: var(--black);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* ---------- Navigation ---------- */
+        .logo {
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: linear-gradient(45deg, var(--orange), var(--yellow));
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li {
+            display: inline;
+            padding-left: 30px;
+            font-size: 20px;
+        }
+
+        a {
+            color: var(--black);
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity var(--transition);
+        }
+
+        nav a:hover {
+            opacity: 0.65;
+        }
+
+        /* ---------- Hero ---------- */
+        main {
+            padding: 60px 20px;
+            font-size: clamp(2rem, 6vw, 70px);
+            color: var(--gold);
+            text-align: center;
+            background-color: var(--azure);
+            border: 1px solid var(--border-light);
+            text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.12);
+        }
+
+        main>div {
+            margin-bottom: 6px;
+        }
+
+        main>div:last-child {
+            font-size: clamp(1rem, 2vw, 30px);
+            text-shadow: none;
+        }
+
+        .some {
+            padding: 30px 20px 10px;
+            font-size: clamp(1.25rem, 2.5vw, 30px);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* ---------- Task picker ---------- */
+        #form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            padding: 20px;
+            font-size: 18px;
+        }
+
+        label {
+            font-weight: 600;
+        }
+
+        /* ---------- Form controls ---------- */
+        input,
+        select,
+        textarea,
+        button {
+            font: inherit;
+        }
+
+        input[type="text"],
+        input[type="datetime-local"],
+        select,
+        textarea {
+            padding: 10px 12px;
+            color: var(--black);
+            background-color: var(--white);
+            border: 2px solid var(--gray);
+            border-radius: var(--radius-sm);
+            outline: none;
+            max-width: 100%;
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+
+        input[type="text"]:focus,
+        input[type="datetime-local"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--orange);
+            box-shadow: 0 0 0 3px rgba(255, 165, 0, 0.25);
+        }
+
+        a:focus-visible,
+        button:focus-visible {
+            outline: 3px solid var(--gold);
+            outline-offset: 2px;
+        }
+
+        #form select {
+            min-width: 220px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        /* ---------- Dynamic tracker cards ---------- */
+        .add {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: min(900px, 92vw);
+            margin: 20px auto 40px;
+        }
+
+        .body2,
+        .body3,
+        .body4 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .academia,
+        .academia2,
+        .academia3,
+        .academia4 {
+            width: 100%;
+            max-width: 90vw;
+            padding: 24px;
+            background-color: var(--whitesmoke);
+            border: 2px solid var(--gray);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--transition), box-shadow var(--transition);
+        }
+
+        .academia:hover,
+        .academia2:hover,
+        .academia3:hover,
+        .academia4:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        h2 {
+            margin-bottom: 14px;
+            font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+            text-align: center;
+        }
+
+        .head_name,
+        .head_name2,
+        .head_name3,
+        .head_name4 {
+            margin-bottom: 6px;
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .head_desc,
+        .head_desc2,
+        .head_desc3,
+        .head_desc4 {
+            margin-top: 14px;
+            margin-bottom: 6px;
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .name,
+        .name2,
+        .name3,
+        .name4 {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .task-name,
+        .task-name2,
+        .task-name3,
+        .task-name4 {
+            width: 100%;
+            min-width: 0;
+            font-size: 17px;
+        }
+
+        .task-desc,
+        .task-desc2,
+        .task-desc3,
+        .task-desc4 {
+            width: 100%;
+            min-width: 0;
+        }
+
+        #form-diff,
+        #sub-form,
+        #form2 {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 16px 0;
+            font-size: 17px;
+        }
+
+        #form2 select,
+        #form2 input[type="text"],
+        #form2 input[type="datetime-local"] {
+            width: 100%;
+        }
+
+        /* ---------- Buttons ---------- */
+        .btn1,
+        .bt2,
+        .bt3,
+        .bt4 {
+            display: block;
+            margin: 24px auto 4px;
+            padding: 12px 32px;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--yellowgreen);
+            background-color: var(--yellow);
+            border: 2px solid var(--black);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: transform var(--transition), background-color var(--transition), color var(--transition), box-shadow var(--transition);
+        }
+
+        .btn1:hover,
+        .bt2:hover,
+        .bt3:hover,
+        .bt4:hover {
+            color: var(--yellow);
+            background-color: var(--yellowgreen);
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn1:active,
+        .bt2:active,
+        .bt3:active,
+        .bt4:active {
+            transform: translateY(0) scale(0.99);
+        }
+
+        .bt1 {
+            padding: 15px;
+            color: var(--azure);
+            background-color: var(--antiquewhite);
+            border: 2px solid var(--black);
+            border-radius: var(--radius-sm);
+        }
+
+        #email {
+            position: relative;
+            bottom: 0;
+            padding: 20px;
+            background-color: skyblue;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .verif {
+            margin-left: 5px;
+        }
+
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 640px) {
+            .logo {
+                font-size: 24px;
+            }
+
+            nav {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            li {
+                padding-left: 14px;
+                font-size: 16px;
+            }
+
+            main {
+                padding: 40px 16px;
+            }
+
+            .add {
+                width: 94vw;
+            }
+
+            .academia,
+            .academia2,
+            .academia3,
+            .academia4 {
+                padding: 16px;
+            }
+
+            .btn1,
+            .bt2,
+            .bt3,
+            .bt4 {
+                width: 100%;
+                padding: 12px 16px;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">Dhyan</div>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/tasks">Tasks</a></li>
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/feedback">FeedBack</a></li>
+        </ul>
+    </nav>
+    <main>
+        <div>Welcome to Dhyan-CERT</div>
+        <div>&</div>
+        <div>Study Tracker</div>
+        <div>Your one-stop solution for study tracking.</div>
+    </main>
+    <div class="some">
+        What do U wanna track today?
+    </div>
+    <form id="form">
+        <label for="study-topic">Choose a Desired Task:</label>
+        <select id="study-topic" name="study-topic" required>
+            <option value="Nothing">Select a task</option>
+            <option value="Academia">Academia</option>
+            <option value="Certification">Certification</option>
+            <option value="Chore">Chore</option>
+            <option value="Other">Other</option>
+        </select>
+    </form>
+    <div class="add"></div>
+    <div id="email"><label for="email_inp">Enter Your Email to Sync Your Data:</label><input type="email"
+            name="email_inp" placeholder="Enter Email" id="sync"><button id="but2" class="verif">Send Code</button>
+    </div>
+    <script>
+        btn = document.getElementById("form");
+        btn.addEventListener("change", async (e) => {
+            e.preventDefault();
+            val = document.getElementById("study-topic")
+            x = val.value
+            const res = await fetch("/api/student", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ value: x }),
+            });
+            content = document.getElementsByClassName("add")[0];
+            if (x == "Nothing") {
+                content.innerHTML = `<div><div>You did not enter anything</div>
+    <div>To add a Task,Select an Option from the dropdown</div></div>`
+            }
+            else if (x == "Academia") {
+                content.innerHTML = `<div class="academia">
+        <h2>Academic Tracker</h2>
+    <form id="form-diff"><div class="name">
+        <div class="head_name">Title:</div>
+        <input type="text" class="task-name" id="name" required name="task-name" placeholder="Enter Title"></div></form>
+        <form id="form2">
+        <label for="academia-type">Choose a Desired Task:</label>
+        <select id="academia-type" name="academia-type" required>
+            <option value="Nothing">Select a task</option>
+            <option value="Assignment">Assignment</option>
+            <option value="Certification">Certification</option>
+            <option value="Exam">Exam</option>
+            <option value="Project">Project</option>
+            <option value="Lab">Lab</option>
+        </select>
+        </form>
+        <form id="sub-form">
+        <div class="head_name sub">Subject:</div>
+        <input type="text" id="sub-name" required name="sub-name" placeholder="Enter Subject"></form>
+        <div class="head_desc3">Task Description:</div>
+        <textarea class="task-desc3" id="task-desc" name="task-desc" rows="5" cols="40" placeholder="Enter Description"></textarea>
+        <form id="form2">
+        <div class="head_name date">Deadline:</div>
+        <input type="datetime-local" id="date" required name="datetime"></form>
+        <button class="btn1" id="But">Track</button>
+    </div>`
+            }
+            else if (x == "Certification") {
+                content.innerHTML = `<div class="body2"><div class="academia2">
+        <h2>Certification Tracker</h2>
+    <form id="form2"><div class="name2">
+        <div class="head_name2">Certification Name:</div>
+        <input type="text" class="task-name2" required name="task-name" id="name" placeholder="Enter Certification Name"></div>
+        <div class="head_desc2">Certification Summary(What you will learn or Skills obtainable):</div>
+        <textarea class="task-desc2" name="task-desc" id="task-desc" rows="5" cols="40" placeholder="Enter Summary"></textarea>
+        <div class="head_name2 date">Deadline:</div>
+        <input type="datetime-local" id="date" required name="datetime">
+        <button class="bt2" id="But">Track</button>
+    </form></div></div>`
+            }
+            else if (x == "Chore") {
+                content.innerHTML = `<div class="body3"><div class="academia3">
+        <h2>Chore Tracker</h2>
+    <form id="form2"><div class="name3">
+        <div class="head_name3">Chore Name:</div>
+        <input type="text" class="task-name3" required name="task-name" id="name" placeholder="Enter Chore Name"></div>
+        <div class="head_desc3">Chore Description:</div>
+        <textarea class="task-desc3" name="task-desc" id="task-desc" rows="5" cols="40" placeholder="Enter Description"></textarea>
+        <div class="head_name3 date">Deadline:</div>
+        <input type="datetime-local" id="date" required name="datetime">
+        <button class="bt3" id="But">Track</button>
+    </form></div></div>`
+            }
+            else if (x == "Other") {
+                content.innerHTML = `<div class="body4"><div class="academia4">
+        <h2>Other Tracker</h2>
+    <form id="form2"><div class="name4">
+        <div class="head_name4">Task Name:</div>
+        <input type="text" class="task-name4" id="name" required name="task-name" placeholder="Enter Task Name"></div>
+        <div class="head_desc4">Task Description:</div>
+        <textarea class="task-desc4" name="task-desc" id="task-desc" rows="5" cols="40" placeholder="Enter Description"></textarea>
+        <div class="head_name4 date">Deadline:</div>
+        <input type="datetime-local" id="date" required name="datetime">
+        <button class="bt4" id="But">Track</button>
+    </form></div></div>`
+            }
+
+
+            btn2 = document.getElementById("But");
+            btn2.addEventListener("click", async (e) => {
+                e.preventDefault();
+                let name = document.getElementById("name").value
+                let desc = document.getElementById("task-desc").value
+                let date = document.getElementById("date").value
+                if (x == "Academia") {
+                    let type = document.getElementById("academia-type").value
+                    let sub = document.getElementById("sub-name").value
+                    const res2 = await fetch("/api/person", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ main_type: x, title: name, task_type: type, subject: sub, cert_desc: desc, deadline: date }),
+                    });
+                    document.getElementById("academia-type").value = "Nothing";
+                    document.getElementById("sub-name").value = "";
+                }
+                else if (x == "Certification" || x == "Chore" || x == "Other") {
+                    const res2 = await fetch("/api/person", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ main_type: x, title: name, cert_desc: desc, deadline: date }),
+                    });
+                    document.getElementById("name").value = "";
+                    document.getElementById("task-desc").value = "";
+                    document.getElementById("date").value = "";
+                }
+            });
+        });
+        btn3 = document.getElementById("but2")
+        btn3.addEventListener("click", async (e) => {
+            e.preventDefault();
+            let email_input = document.getElementById("sync").value
+            const res3 = await fetch("/api/email_id", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email_id: email_input }),
+            });
+            let email = document.getElementById("email");
+            email.innerHTML = `<label for="email_inp">Enter Verification Code:</label><input type="number" name="email_inp" placeholder="Enter Verification Code" id="code"><button class="verif" id="but3">Verify Me</button>`
+            btn4 = document.getElementById("but3");
+            btn4.addEventListener("click", async (e) => {
+                e.preventDefault();
+                code_input = document.getElementById("code").value
+                const res4 = await fetch("/api/code", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ otp: code_input}),
+                });
+                const status = await res4.json()
+                if (status.Status === "Verified") {
+                    email.innerHTML = "Welcome to Dhyan"
+                }
+                else {
+                    email.innerHTML = `<label for="email_inp">Enter Verification Code:</label><input type="number" name="email_inp" placeholder="Enter Verification Code" id="code"><button class="verif" id="but3">Resend otp</button><div>Wrong Code</div>`
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

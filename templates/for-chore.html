@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .name{
+            /* display: flex; */
+            justify-content: left;
+        }
+        .desc{
+            display: flex;
+            justify-content: left;
+            align-items: center;
+        }
+        .academia{
+            padding: 10px;
+            border: 2px solid gray;
+            background-color: whitesmoke;
+            max-width: 0.95vw;
+        }
+        h2{
+            text-align: center;
+        }
+        .head_name{
+            font-size: 20px;
+        }
+        #task-name{
+            /* scale: 1.5;
+            justify-content: left; */
+        }
+        body{
+            display: flex;
+            justify-content: center;
+            align-items:center ;
+        }
+        #task-name{
+            scale: 1.5;
+            min-width: 0.6vw;
+        }
+    </style>
+</head>
+<body>
+    <div class="academia">
+        <h2>Academic Tracker</h2>
+    <form id="form"><div class="name">
+        <div class="head_name">Task Name:</div>
+        <input type="text" id="task-name" required name="task-name"></div>
+        <div class="desc">
+        <label for="task-desc">Task Description:</label>
+        <textarea id="task-desc" name="task-desc" rows="5" cols="40"></textarea></div>
+    </form></div>
+</body>
+</html>

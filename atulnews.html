@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AtulNews — News That Matters</title>
+    <style>
+        /* ============ RESET & VARIABLES ============ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --red: #e63946;
+            --red-dark: #c1121f;
+            --dark: #0d1321;
+            --dark-2: #1d2d44;
+            --light: #f8f9fa;
+            --grey: #6c757d;
+            --border: #e5e7eb;
+            --card-bg: #ffffff;
+            --text: #1f2430;
+            --text-muted: #64748b;
+            --shadow: 0 4px 20px rgba(13, 19, 33, 0.08);
+            --shadow-lg: 0 12px 32px rgba(13, 19, 33, 0.16);
+        }
+
+        body.dark-mode {
+            --light: #0d1321;
+            --card-bg: #161c2c;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: #26324a;
+            --dark: #090d18;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: var(--light);
+            color: var(--text);
+            transition: background 0.3s, color 0.3s;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* ============ READING PROGRESS BAR ============ */
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: linear-gradient(90deg, var(--red), #ff8800);
+            z-index: 2000;
+            transition: width 0.1s linear;
+        }
+
+        /* ============ TOP BAR & NAVBAR ============ */
+        .topbar {
+            background: var(--dark);
+            color: #cbd5e1;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 5%;
+        }
+
+        .topbar .date {
+            letter-spacing: 0.5px;
+        }
+
+        .topbar .socials span {
+            margin-left: 14px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .topbar .socials span:hover {
+            color: var(--red);
+        }
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 5%;
+            box-shadow: var(--shadow);
+            border-bottom: 3px solid var(--red);
+        }
+
+        .logo {
+            font-size: 1.7rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .logo .atul {
+            color: var(--text);
+        }
+
+        .logo .news {
+            color: var(--red);
+        }
+
+        .logo .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--red);
+            border-radius: 50%;
+            margin-left: 3px;
+            animation: pulse 1.6s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.4;
+                transform: scale(0.8);
+            }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 4px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 0.92rem;
+            padding: 8px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: var(--red);
+            color: #fff;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 6px 14px;
+            transition: border 0.2s, box-shadow 0.2s;
+        }
+
+        .search-box:focus-within {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.15);
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            background: transparent;
+            color: var(--text);
+            width: 140px;
+            font-size: 0.9rem;
+        }
+
+        #theme-toggle {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.3s, background 0.2s;
+        }
+
+        #theme-toggle:hover {
+            transform: rotate(20deg) scale(1.1);
+        }
+
+        #subscribe-btn {
+            background: var(--red);
+            color: #fff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 24px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        #subscribe-btn:hover {
+            background: var(--red-dark);
+            transform: translateY(-2px);
+        }
+
+        /* ============ BREAKING NEWS TICKER ============ */
+        .ticker-wrap {
+            background: var(--red);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .ticker-label {
+            background: var(--dark);
+            padding: 10px 18px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            z-index: 2;
+            flex-shrink: 0;
+        }
+
+        .ticker-label::before {
+            content: "● ";
+            color: var(--red);
+            animation: pulse 1s infinite;
+        }
+
+        #ticker {
+            overflow: hidden;
+            flex: 1;
+        }
+
+        #ticker span {
+            display: inline-block;
+            padding-left: 100%;
+            animation: ticker-scroll 30s linear infinite;
+            font-size: 0.9rem;
+        }
+
+        #ticker span:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes ticker-scroll {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        /* ============ MAIN LAYOUT ============ */
+        .container {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 28px 20px 60px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 34px 0 18px;
+        }
+
+        .section-title h2 {
+            font-size: 1.35rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .section-title::after {
+            content: "";
+            flex: 1;
+            height: 3px;
+            background: linear-gradient(90deg, var(--red), transparent);
+            border-radius: 2px;
+        }
+
+        /* ============ HERO ============ */
+        .hero {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 22px;
+            margin-top: 10px;
+        }
+
+        .hero-main {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            min-height: 420px;
+            display: flex;
+            align-items: flex-end;
+            background: linear-gradient(135deg, #1d2d44 0%, #3e5c76 50%, #748cab 100%);
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .hero-main:hover {
+            transform: translateY(-4px);
+        }
+
+        .hero-main::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 80% 20%, rgba(230, 57, 70, 0.35), transparent 50%),
+                linear-gradient(transparent 30%, rgba(0, 0, 0, 0.85));
+        }
+
+        .hero-content {
+            position: relative;
+            padding: 30px;
+            color: #fff;
+        }
+
+        .hero-content h1 {
+            font-size: 2.1rem;
+            line-height: 1.25;
+            margin: 12px 0 10px;
+        }
+
+        .hero-content p {
+            color: #d8dee9;
+            max-width: 640px;
+            line-height: 1.6;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--red);
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .badge.blue {
+            background: #3e5c76;
+        }
+
+        .badge.green {
+            background: #2a9d8f;
+        }
+
+        .badge.orange {
+            background: #e76f51;
+        }
+
+        .badge.purple {
+            background: #7b2cbf;
+        }
+
+        .hero-side {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .side-card {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.25s, box-shadow 0.25s;
+        }
+
+        .side-card:hover {
+            transform: translateX(6px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .side-thumb {
+            width: 86px;
+            height: 86px;
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+
+        .side-card h3 {
+            font-size: 0.98rem;
+            line-height: 1.4;
+            margin: 6px 0 4px;
+        }
+
+        .meta {
+            font-size: 0.76rem;
+            color: var(--text-muted);
+        }
+
+        .meta b {
+            color: var(--red);
+            font-weight: 700;
+        }
+
+        /* article gradient thumbnails */
+        .g1 {
+            background: linear-gradient(135deg, #e63946, #ff8800);
+        }
+
+        .g2 {
+            background: linear-gradient(135deg, #2a9d8f, #264653);
+        }
+
+        .g3 {
+            background: linear-gradient(135deg, #7b2cbf, #c77dff);
+        }
+
+        .g4 {
+            background: linear-gradient(135deg, #3e5c76, #748cab);
+        }
+
+        .g5 {
+            background: linear-gradient(135deg, #e76f51, #f4a261);
+        }
+
+        .g6 {
+            background: linear-gradient(135deg, #118ab2, #06d6a0);
+        }
+
+        /* ============ CATEGORY FILTER ============ */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .filter-chip {
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-chip:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        .filter-chip.active {
+            background: var(--red);
+            border-color: var(--red);
+            color: #fff;
+        }
+
+        /* ============ NEWS GRID ============ */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 22px;
+        }
+
+        .news-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.25s, box-shadow 0.25s;
+            animation: fadeUp 0.5s ease both;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .news-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .news-thumb {
+            height: 150px;
+            position: relative;
+        }
+
+        .news-thumb .badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+        }
+
+        .news-body {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .news-body h3 {
+            font-size: 1.05rem;
+            line-height: 1.45;
+            cursor: pointer;
+        }
+
+        .news-body h3:hover {
+            color: var(--red);
+        }
+
+        .news-body p {
+            font-size: 0.87rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+            flex: 1;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border);
+            padding-top: 10px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .read-time {
+            background: rgba(230, 57, 70, 0.1);
+            color: var(--red);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 50px;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            display: none;
+        }
+
+        /* ============ TRENDING / SIDEBAR ============ */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 26px;
+            align-items: start;
+        }
+
+        .trending-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            position: sticky;
+            top: 92px;
+        }
+
+        .trending-panel h3 {
+            font-size: 1.05rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--red);
+            display: inline-block;
+        }
+
+        .trend-item {
+            display: flex;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--border);
+            cursor: pointer;
+        }
+
+        .trend-item:last-child {
+            border-bottom: none;
+        }
+
+        .trend-num {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: rgba(230, 57, 70, 0.25);
+            line-height: 1;
+        }
+
+        .trend-item:hover .trend-num {
+            color: var(--red);
+        }
+
+        .trend-item h4 {
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .trend-item .meta {
+            margin-top: 4px;
+        }
+
+        /* ============ NEWSLETTER ============ */
+        .newsletter {
+            margin-top: 46px;
+            background: linear-gradient(120deg, var(--dark), var(--dark-2));
+            border-radius: 18px;
+            padding: 44px 30px;
+            text-align: center;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .newsletter::before {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(230, 57, 70, 0.25);
+            top: -120px;
+            right: -80px;
+            filter: blur(10px);
+        }
+
+        .newsletter h2 {
+            font-size: 1.7rem;
+            margin-bottom: 8px;
+        }
+
+        .newsletter p {
+            color: #b8c2d4;
+            margin-bottom: 22px;
+        }
+
+        .newsletter form {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .newsletter input {
+            padding: 13px 20px;
+            border-radius: 26px;
+            border: none;
+            outline: none;
+            width: min(340px, 80vw);
+            font-size: 0.95rem;
+        }
+
+        .newsletter button {
+            padding: 13px 28px;
+            border-radius: 26px;
+            border: none;
+            background: var(--red);
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .newsletter button:hover {
+            background: var(--red-dark);
+            transform: translateY(-2px);
+        }
+
+        #newsletter-msg {
+            margin-top: 14px;
+            font-size: 0.9rem;
+            min-height: 20px;
+        }
+
+        #newsletter-msg.ok {
+            color: #7ae582;
+        }
+
+        #newsletter-msg.err {
+            color: #ffb3b3;
+        }
+
+        /* ============ FOOTER ============ */
+        footer {
+            background: var(--dark);
+            color: #94a3b8;
+            margin-top: 60px;
+        }
+
+        .footer-grid {
+            max-width: 1250px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 30px;
+            padding: 46px 20px 30px;
+        }
+
+        .footer-grid h4 {
+            color: #fff;
+            margin-bottom: 14px;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-grid a {
+            display: block;
+            color: #94a3b8;
+            text-decoration: none;
+            padding: 4px 0;
+            font-size: 0.88rem;
+            transition: color 0.2s, padding-left 0.2s;
+        }
+
+        .footer-grid a:hover {
+            color: var(--red);
+            padding-left: 5px;
+        }
+
+        .footer-grid p {
+            font-size: 0.88rem;
+            line-height: 1.7;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #1d2d44;
+            text-align: center;
+            padding: 16px;
+            font-size: 0.8rem;
+        }
+
+        /* ============ SCROLL TO TOP ============ */
+        #to-top {
+            position: fixed;
+            bottom: 26px;
+            right: 26px;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            border: none;
+            background: var(--red);
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s;
+            box-shadow: var(--shadow-lg);
+            z-index: 1500;
+        }
+
+        #to-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #to-top:hover {
+            transform: translateY(-4px);
+        }
+
+        /* ============ TOAST ============ */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(120px);
+            background: var(--dark);
+            color: #fff;
+            padding: 13px 26px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity 0.4s;
+            z-index: 3000;
+            border-left: 4px solid var(--red);
+        }
+
+        #toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 980px) {
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+
+            .trending-panel {
+                position: static;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .search-box input {
+                width: 80px;
+            }
+
+            .topbar .date {
+                display: none;
+            }
+
+            .hero-content h1 {
+                font-size: 1.4rem;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="progress-bar"></div>
+
+    <!-- Top bar -->
+    <div class="topbar">
+        <span class="date" id="today-date"></span>
+        <span class="socials">
+            <span title="Facebook">📘</span>
+            <span title="X / Twitter">🐦</span>
+            <span title="Instagram">📷</span>
+            <span title="YouTube">▶️</span>
+        </span>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo" onclick="scrollTo({top:0, behavior:'smooth'})">
+            <span class="atul">Atul</span><span class="news">News</span><span class="dot"></span>
+        </div>
+        <ul class="nav-links" id="nav-links"></ul>
+        <div class="nav-actions">
+            <div class="search-box">
+                <span>🔍</span>
+                <input type="text" id="search" placeholder="Search news...">
+            </div>
+            <button id="theme-toggle" title="Toggle dark mode">🌙</button>
+            <button id="subscribe-btn">Subscribe</button>
+        </div>
+    </nav>
+
+    <!-- Breaking news ticker -->
+    <div class="ticker-wrap">
+        <div class="ticker-label">BREAKING</div>
+        <div id="ticker"><span></span></div>
+    </div>
+
+    <div class="container">
+
+        <!-- Hero section -->
+        <section class="hero" id="home">
+            <div class="hero-main" id="hero-main">
+                <div class="hero-content">
+                    <span class="badge" id="hero-badge"></span>
+                    <h1 id="hero-title"></h1>
+                    <p id="hero-desc"></p>
+                    <div class="meta" style="color:#cbd5e1; margin-top:10px;" id="hero-meta"></div>
+                </div>
+            </div>
+            <div class="hero-side" id="hero-side"></div>
+        </section>
+
+        <!-- Category filters -->
+        <div class="section-title"><h2>Latest Stories</h2></div>
+        <div class="filters" id="filters"></div>
+
+        <!-- News grid + trending sidebar -->
+        <div class="two-col">
+            <div>
+                <div class="news-grid" id="news-grid"></div>
+                <div class="no-results" id="no-results">😕 No stories found. Try a different search or category.</div>
+            </div>
+            <aside class="trending-panel">
+                <h3>🔥 Trending Now</h3>
+                <div id="trending-list"></div>
+            </aside>
+        </div>
+
+        <!-- Newsletter -->
+        <section class="newsletter">
+            <h2>Never Miss a Story 📬</h2>
+            <p>Get the day's top headlines delivered to your inbox every morning at 7 AM.</p>
+            <form id="newsletter-form">
+                <input type="email" id="newsletter-email" placeholder="Enter your email address" required>
+                <button type="submit">Subscribe Free</button>
+            </form>
+            <div id="newsletter-msg"></div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div>
+                <div class="logo" style="margin-bottom:12px;">
+                    <span class="atul" style="color:#fff;">Atul</span><span class="news">News</span><span class="dot"></span>
+                </div>
+                <p>Honest, fast and unbiased journalism. AtulNews brings you verified stories from India and around
+                    the globe — 24x7, straight to your screen.</p>
+            </div>
+            <div>
+                <h4>Sections</h4>
+                <a href="#">India</a>
+                <a href="#">World</a>
+                <a href="#">Technology</a>
+                <a href="#">Sports</a>
+                <a href="#">Business</a>
+            </div>
+            <div>
+                <h4>Company</h4>
+                <a href="#">About Us</a>
+                <a href="#">Careers</a>
+                <a href="#">Contact</a>
+                <a href="#">Advertise</a>
+            </div>
+            <div>
+                <h4>Legal</h4>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Use</a>
+                <a href="#">Editorial Policy</a>
+                <a href="#">Grievance</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 AtulNews Media Pvt. Ltd. All rights reserved. Made with ❤️ in India.
+        </div>
+    </footer>
+
+    <button id="to-top" title="Back to top">↑</button>
+    <div id="toast"></div>
+
+    <script>
+        /* ==================== DATA ==================== */
+        const articles = [
+            {
+                id: 1, category: "India", badge: "red", title: "ISRO Announces Next-Gen Reusable Rocket Programme",
+                desc: "The space agency confirmed that the first orbital test flight is targeted for early next year, marking a major leap for affordable launches.",
+                author: "Ananya Rao", time: "12 min ago", read: "4 min", gradient: "g1", featured: true
+            },
+            {
+                id: 2, category: "Technology", badge: "purple", title: "AI Chips Hit New Efficiency Record in Lab Tests",
+                desc: "Researchers demonstrated a processor that cuts inference energy use by 60%, with commercial chips expected within two years.",
+                author: "Rohit Verma", time: "1 hr ago", read: "5 min", gradient: "g2"
+            },
+            {
+                id: 3, category: "Sports", badge: "green", title: "India Seal Series With Last-Over Thriller",
+                desc: "Needing 9 off 6 balls, the middle order kept calm to complete a famous chase in front of a sold-out stadium.",
+                author: "Kabir Singh", time: "2 hrs ago", read: "3 min", gradient: "g3"
+            },
+            {
+                id: 4, category: "Business", badge: "orange", title: "Rupee Strongest in Six Months as Exports Surge",
+                desc: "IT and pharma services drove a record quarter, easing pressure on import bills and lifting key market indices.",
+                author: "Meera Iyer", time: "3 hrs ago", read: "4 min", gradient: "g4"
+            },
+            {
+                id: 5, category: "World", badge: "blue", title: "Global Climate Summit Ends With Landmark Funding Pact",
+                desc: "Delegates from 190 countries agreed on an adaptation fund for coastal and island nations most at risk.",
+                author: "World Desk", time: "4 hrs ago", read: "6 min", gradient: "g5"
+            },
+            {
+                id: 6, category: "Technology", badge: "purple", title: "Open-Source LLMs Close the Gap With Frontier Models",
+                desc: "A new benchmark suite shows community models matching closed systems on coding and reasoning tasks.",
+                author: "Dev Malhotra", time: "5 hrs ago", read: "5 min", gradient: "g6"
+            },
+            {
+                id: 7, category: "India", badge: "red", title: "Monsoon Arrives Early Over Kerala Coast",
+                desc: "The met department upgraded its forecast, expecting above-average rainfall across central states this season.",
+                author: "City Desk", time: "6 hrs ago", read: "2 min", gradient: "g2"
+            },
+            {
+                id: 8, category: "Sports", badge: "green", title: "Teen Grandmaster Breaks 30-Year-Old National Record",
+                desc: "A fearless endgame in the final round produced the youngest champion in the tournament's history.",
+                author: "Sports Desk", time: "8 hrs ago", read: "3 min", gradient: "g1"
+            },
+            {
+                id: 9, category: "Business", badge: "orange", title: "EV Sales Double as Charging Network Expands to Tier-2 Cities",
+                desc: "Analysts say affordable financing and new highway fast-chargers are converting fence-sitters faster than expected.",
+                author: "Priya Nair", time: "9 hrs ago", read: "4 min", gradient: "g4"
+            },
+            {
+                id: 10, category: "World", badge: "blue", title: "Archaeologists Unearth 2,000-Year-Old Trade Port",
+                desc: "Excavations revealed dock structures, amphorae and inscriptions pointing to thriving maritime commerce.",
+                author: "Reuters", time: "11 hrs ago", read: "5 min", gradient: "g5"
+            },
+            {
+                id: 11, category: "Technology", badge: "purple", title: "Quantum Network Links Two Cities Over 500 km",
+                desc: "The experiment paves the way for ultra-secure communication backbones between metropolitan hubs.",
+                author: "Tech Desk", time: "13 hrs ago", read: "6 min", gradient: "g6"
+            },
+            {
+                id: 12, category: "India", badge: "red", title: "Metro Phase-IV Corridor Opens to Public This Weekend",
+                desc: "The new line cuts cross-city travel time by half and is expected to serve 8 lakh commuters daily.",
+                author: "City Desk", time: "15 hrs ago", read: "3 min", gradient: "g3"
+            }
+        ];
+
+        const categories = ["All", "India", "World", "Technology", "Sports", "Business"];
+        let activeCategory = "All";
+        let searchQuery = "";
+
+        /* ==================== NAV LINKS ==================== */
+        document.getElementById("nav-links").innerHTML =
+            categories.map((c, i) =>
+                `<a data-nav="${c}" class="${i === 0 ? "active" : ""}">${c === "All" ? "Home" : c}</a>`
+            ).join("");
+
+        document.getElementById("nav-links").addEventListener("click", (e) => {
+            const link = e.target.closest("a");
+            if (!link) return;
+            document.querySelectorAll("#nav-links a").forEach(a => a.classList.remove("active"));
+            link.classList.add("active");
+            setCategory(link.dataset.nav === "Home" ? "All" : link.dataset.nav);
+            document.getElementById("home").scrollIntoView({ behavior: "smooth" });
+        });
+
+        /* ==================== DATE & TICKER ==================== */
+        document.getElementById("today-date").textContent =
+            new Date().toLocaleDateString("en-IN", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+
+        const tickerText = articles.map(a => `📰 ${a.title}`).join("  •  ") + "  •  ";
+        document.querySelector("#ticker span").textContent = tickerText;
+
+        /* ==================== HERO ==================== */
+        const hero = articles.find(a => a.featured);
+        const heroMain = document.getElementById("hero-main");
+        heroMain.style.background = `linear-gradient(135deg, #1d2d44, ${hero.gradient === "g1" ? "#e63946" : "#3e5c76"})`;
+        document.getElementById("hero-badge").textContent = hero.category;
+        document.getElementById("hero-title").textContent = hero.title;
+        document.getElementById("hero-desc").textContent = hero.desc;
+        document.getElementById("hero-meta").innerHTML = `By <b>${hero.author}</b> • ${hero.time} • ${hero.read} read`;
+
+        document.getElementById("hero-side").innerHTML = articles
+            .filter(a => a.id !== hero.id).slice(0, 4)
+            .map(a => `
+                <div class="side-card">
+                    <div class="side-thumb ${a.gradient}"></div>
+                    <div>
+                        <span class="meta"><b>${a.category}</b> • ${a.time}</span>
+                        <h3>${a.title}</h3>
+                    </div>
+                </div>`).join("");
+
+        /* ==================== FILTERS ==================== */
+        document.getElementById("filters").innerHTML =
+            categories.map(c => `<button class="filter-chip ${c === activeCategory ? "active" : ""}" data-cat="${c}">${c}</button>`).join("");
+
+        document.getElementById("filters").addEventListener("click", (e) => {
+            if (!e.target.matches(".filter-chip")) return;
+            setCategory(e.target.dataset.cat);
+        });
+
+        function setCategory(cat) {
+            activeCategory = cat;
+            document.querySelectorAll(".filter-chip").forEach(chip =>
+                chip.classList.toggle("active", chip.dataset.cat === cat));
+            renderNews();
+        }
+
+        /* ==================== RENDER NEWS GRID ==================== */
+        function renderNews() {
+            const grid = document.getElementById("news-grid");
+            const list = articles.filter(a =>
+                (activeCategory === "All" || a.category === activeCategory) &&
+                (a.title + a.desc).toLowerCase().includes(searchQuery)
+            );
+
+            document.getElementById("no-results").style.display = list.length ? "none" : "block";
+            grid.innerHTML = list.map((a, i) => `
+                <article class="news-card" style="animation-delay:${i * 0.06}s">
+                    <div class="news-thumb ${a.gradient}">
+                        <span class="badge">${a.category}</span>
+                    </div>
+                    <div class="news-body">
+                        <h3 onclick="showToast('Opening: ${a.title.slice(0, 34)}…')">${a.title}</h3>
+                        <p>${a.desc}</p>
+                        <div class="card-footer">
+                            <span>✍️ ${a.author} • ${a.time}</span>
+                            <span class="read-time">${a.read}</span>
+                        </div>
+                    </div>
+                </article>`).join("");
+        }
+
+        /* ==================== TRENDING ==================== */
+        document.getElementById("trending-list").innerHTML =
+            [...articles].slice(2, 7).map((a, i) => `
+                <div class="trend-item">
+                    <div class="trend-num">${String(i + 1).padStart(2, "0")}</div>
+                    <div>
+                        <h4>${a.title}</h4>
+                        <div class="meta"><b>${a.category}</b> • ${a.read} read</div>
+                    </div>
+                </div>`).join("");
+
+        /* ==================== SEARCH ==================== */
+        document.getElementById("search").addEventListener("input", (e) => {
+            searchQuery = e.target.value.trim().toLowerCase();
+            renderNews();
+        });
+
+        /* ==================== THEME TOGGLE ==================== */
+        const themeBtn = document.getElementById("theme-toggle");
+        if (localStorage.getItem("atulnews-theme") === "dark") {
+            document.body.classList.add("dark-mode");
+            themeBtn.textContent = "☀️";
+        }
+        themeBtn.addEventListener("click", () => {
+            document.body.classList.toggle("dark-mode");
+            const dark = document.body.classList.contains("dark-mode");
+            themeBtn.textContent = dark ? "☀️" : "🌙";
+            localStorage.setItem("atulnews-theme", dark ? "dark" : "light");
+        });
+
+        /* ==================== NEWSLETTER ==================== */
+        document.getElementById("newsletter-form").addEventListener("submit", (e) => {
+            e.preventDefault();
+            const email = document.getElementById("newsletter-email").value.trim();
+            const msg = document.getElementById("newsletter-msg");
+            const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            msg.textContent = valid
+                ? `✅ Thanks! Top headlines are on their way to ${email}.`
+                : "❌ Please enter a valid email address.";
+            msg.className = valid ? "ok" : "err";
+            if (valid) { e.target.reset(); showToast("Subscribed successfully 🎉"); }
+        });
+
+        /* ==================== PROGRESS BAR + TO TOP ==================== */
+        const progressBar = document.getElementById("progress-bar");
+        const toTop = document.getElementById("to-top");
+        window.addEventListener("scroll", () => {
+            const scrolled = window.scrollY;
+            const max = document.documentElement.scrollHeight - window.innerHeight;
+            progressBar.style.width = (max > 0 ? (scrolled / max) * 100 : 0) + "%";
+            toTop.classList.toggle("visible", scrolled > 400);
+        });
+        toTop.addEventListener("click", () => scrollTo({ top: 0, behavior: "smooth" }));
+
+        /* ==================== MISC BUTTONS ==================== */
+        document.getElementById("subscribe-btn").addEventListener("click", () => {
+            document.querySelector(".newsletter").scrollIntoView({ behavior: "smooth" });
+        });
+
+        document.querySelector(".socials").addEventListener("click", () =>
+            showToast("Follow @AtulNews everywhere 🌐"));
+
+        let toastTimer;
+        function showToast(text) {
+            const toast = document.getElementById("toast");
+            toast.textContent = text;
+            toast.classList.add("show");
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
+        }
+
+        /* initial render */
+        renderNews();
+    </script>
+</body>
+
+</html>

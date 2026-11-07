@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .name2{
+            /* display: flex; */
+            justify-content: left;
+            padding-bottom: 10px;
+        }
+        /* .desc{
+            display: flex;
+            justify-content: left;
+            align-items: center;
+        } */
+        .academia2{
+            padding: 10px;
+            border: 2px solid gray;
+            background-color: whitesmoke;
+            max-width: 90vw;
+        }
+        h2{
+            text-align: center;
+        }
+        .head_name2{
+            font-size: 20px;
+        }
+        #task-name2{
+            /* scale: 1.5;
+            justify-content: left; */
+        }
+        body{
+            display: flex;
+            justify-content: center;
+            align-items:center ;
+        }
+        #task-name2{
+            font-size: 20px;
+            min-width: 60vw;
+        }
+        .head_desc2{
+            font-size: 20px;
+            padding: 4px;
+        }
+        #task-desc2{
+            min-width: 80vw;
+        }
+        .bt2{
+            scale: 1.5;
+            display: block;
+            margin:0 auto;
+            padding: 5px;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="academia">
+        <h2>Certification Tracker</h2>
+    <form id="form"><div class="name">
+        <div class="head_name">Certification Name:</div>
+        <input type="text" id="task-name" required name="task-name"></div>
+        <div class="head_desc">Certification Summary(What you will learn or Skills obtainable):</div>
+        <textarea id="task-desc" name="task-desc" rows="5" cols="40"></textarea>
+        <div class="head_name date">Deadline:</div>
+        <input type="datetime-local" id="date" required name="datetime"></form>
+        <button class="bt2">Track</button>
+    </form></div>
+</body>
+</html>

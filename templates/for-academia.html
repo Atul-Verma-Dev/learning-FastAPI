@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .name{
+            /* display: flex; */
+            justify-content: left;
+        }
+        /* .desc{
+            display: flex;
+            justify-content: left;
+            align-items: center;
+        } */
+        .academia{
+            padding: 10px;
+            border: 2px solid gray;
+            background-color: whitesmoke;
+            max-width: 90vw;
+        }
+        h2{
+            text-align: center;
+        }
+        .head_name{
+            font-size: 20px;
+        }
+        #task-name{
+            /* scale: 1.5;
+            justify-content: left; */
+        }
+        body{
+            display: flex;
+            justify-content: center;
+            align-items:center ;
+        }
+        #task-name{
+            font-size: 20px;
+            min-width: 60vw;
+        }
+        .head_desc{
+            font-size: 20px;
+        }
+        #task-desc{
+            min-width: 80vw;
+        }
+        .bt1{
+            padding: 15px;
+            background-color: antiquewhite;
+            color: azure;
+            border: 2px solid black;
+            
+        }
+        #form2{
+            margin-top: 15px;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .button{
+            padding: 10px 10px 10px 10px;
+            border: 2px solid black;
+            background-color: yellow;
+            color: yellowgreen;
+        }
+        .button:hover{
+            scale: 1.02;
+            background-color: yellowgreen;
+            color: yellow;
+        }
+    </style>
+</head>
+<body>
+    <div class="academia">
+        <h2>Academic Tracker</h2>
+    <form id="form"><div class="name">
+        <div class="head_name">Title:</div>
+        <input type="text" id="task-name" required name="task-name"></div></form>
+        <form id="form2">
+        <label for="academia-type">Choose a Desired Task:</label>
+        <select id="academia-type" name="academia-type" required>
+            <option value="Nothing">Select a task</option>
+            <option value="Assignment">Assignment</option>
+            <option value="Certification">Certification</option>
+            <option value="Exam">Exam</option>
+            <option value="Project">Project</option>
+            <option value="Lab">Lab</option>
+        </select>
+        </form>
+        <form id="sub-form">
+        <div class="head_name sub">Subject:</div>
+        <input type="text" id="task-name" required name="sub-name"></form>
+        <form id="form2">
+        <div class="head_name date">Deadline:</div>
+        <input type="datetime-local" id="date" required name="datetime"></form>
+        <div class="button">Track</div>
+    </div>
+</body>
+</html>
