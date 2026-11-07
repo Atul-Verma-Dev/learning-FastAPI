@@ -188,6 +188,5 @@ def rec_code_from_js(otp:otp_js,request: Request,response:Response):
     
 
 
-
-
-
+@app.get("api/update")
+def 
