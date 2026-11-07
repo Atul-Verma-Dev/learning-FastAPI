@@ -426,6 +426,7 @@
             <div class="task-card type-{{ task_category | lower }}">
                 <div class="task-top">
                     <span class="task-badge">{{ task_category }}</span>
+                    <span class="task-id">#{{ loop.index }}</span>
                 </div>
 
                 <div class="task-title">{{ task[2] or "Untitled Task" }}</div>
