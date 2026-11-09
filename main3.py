@@ -186,7 +186,71 @@ def rec_code_from_js(otp:otp_js,request: Request,response:Response):
     else:
         return{"Status":"Not Verified"}
     
+# class person(BaseModel):
+#     main_type:str
+#     title:str
+#     task_type:str|None=None
+#     subject:str|None=None
+#     cert_desc:str|None=None
+#     deadline:datetime
+
+class primary_key(BaseModel):
+    task_id:str
+
+@app.post("/api/update")
+def recieve_id(id:primary_key,request:Request,response:Response):
+    x = get_or_set_session_id(request,response)
+    y = id.task_id
+    z[x]["id"] = y
+    conn = p.connect(DATABASE_URL, connect_timeout=10)
+    cur = conn.cursor()
+    cur.execute("SELECT id,type,title,task_type,subject,description,deadline FROM Data WHERE id=%s",(y,))
+    result = cur.fetchone()
+    data = list(result)
+    data[6] = result[6].strftime("%Y-%m-%dT%H:%M") if result[6] else ""
+    cur.close()
+    conn.close()
+    return {"data":data}
+
+class user_task(BaseModel):#Data filled earlier by user
+    id:int
+    type:str
+    title:str
+    task_type:str|None=None
+    subject:str|None=None
+    description:str|None=None
+    deadline:datetime
+
+                                         
+
+@app.post("/api/update_db")
+def update_db(data:user_task,request:Request,response:Response):
+    x = get_or_set_session_id(request,response)
+    conn = p.connect(DATABASE_URL, connect_timeout=10)
+    cur = conn.cursor()
+    # if z.get(x).get("status") == 0:
+    #         cur.execute("SELECT id,type,title,task_type,subject,description,deadline FROM Data WHERE email_or_uuid=%s",(x,))
+    #     elif z.get(x).get("status") == 1:
+    #         cur.execute("SELECT id,type,title,task_type,subject,description,deadline FROM Data WHERE email_or_uuid=%s",(z.get(x).get("email"),))
+    if z.get(x).get("status") == 0:
+        cur.execute("UPDATE Data SET type = %s,title = %s,task_type = %s,subject = %s,description = %s,deadline = %s WHERE id = %s AND email_or_uuid = %s",(data.type,data.title,data.task_type,data.subject,data.description,data.deadline,data.id,x))
+    elif z.get(x).get("status") == 1:
+        cur.execute("UPDATE Data SET type = %s,title = %s,task_type = %s,subject = %s,description = %s,deadline = %s WHERE id = %s AND email_or_uuid = %s",(data.type,data.title,data.task_type,data.subject,data.description,data.deadline,data.id,z.get(x).get("email")))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return {"Status":"Updated"}
 
 
-@app.get("api/update")
-def 
+@app.post("/api/delete")
+def delete(id:primary_key,request:Request,response:Response):
+    x = get_or_set_session_id(request,response)
+    conn = p.connect(DATABASE_URL, connect_timeout=10)
+    cur = conn.cursor()
+    if z.get(x).get("status") == 0:
+        cur.execute("DELETE FROM Data WHERE id %s AND email_or_uuid = %s",(id.task_id,x))
+    elif z.get(x).get("status") == 1:
+        cur.execute("DELETE FROM Data WHERE id %s AND email_or_uuid = %s",(id.task_id,z.get(x).get("email")))
+    conn.commit()
+    cur.close()
+    conn.close()
