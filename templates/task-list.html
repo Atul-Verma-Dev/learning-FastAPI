@@ -1148,8 +1148,27 @@
 
             });
         });
-        document.querySelectorAll(".delete-btn").forEach(button => {
-            
+        function refreshCountAndNumbers() {
+            const cards = document.querySelectorAll(".task-card");
+            document.querySelector(".task-count").textContent = cards.length;
+            cards.forEach((c, i) => {
+                c.querySelector(".task-id").textContent = "#" + (i + 1);
+            });
+            if (cards.length === 0) window.location.reload();   // shows the empty state
+        }
+        document.querySelectorAll(".delete-btn").forEach(button2 => {
+            button2.addEventListener("click", async (e) => {
+                e.preventDefault()
+                const id = button2.dataset.id;
+                const card = button2.closest(".task-card");
+                const response = await fetch("/api/delete", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ task_id: id }),
+                });
+                card.remove();
+                refreshCountAndNumbers();
+            });
         });
     </script>
 </body>

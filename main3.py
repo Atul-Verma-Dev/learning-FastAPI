@@ -248,9 +248,9 @@ def delete(id:primary_key,request:Request,response:Response):
     conn = p.connect(DATABASE_URL, connect_timeout=10)
     cur = conn.cursor()
     if z.get(x).get("status") == 0:
-        cur.execute("DELETE FROM Data WHERE id %s AND email_or_uuid = %s",(id.task_id,x))
+        cur.execute("DELETE FROM Data WHERE id = %s AND email_or_uuid = %s",(id.task_id,x))
     elif z.get(x).get("status") == 1:
-        cur.execute("DELETE FROM Data WHERE id %s AND email_or_uuid = %s",(id.task_id,z.get(x).get("email")))
+        cur.execute("DELETE FROM Data WHERE id = %s AND email_or_uuid = %s",(id.task_id,z.get(x).get("email")))
     conn.commit()
     cur.close()
     conn.close()
