@@ -39,6 +39,8 @@
         }
 
         body {
+            display: flex;
+            flex-direction: column;
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             color: var(--black);
             line-height: 1.5;
@@ -85,23 +87,43 @@
             opacity: 0.65;
         }
 
+        nav a.active {
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
+
         /* ---------- Hero ---------- */
         main {
             padding: 60px 20px;
-            font-size: clamp(2rem, 6vw, 70px);
-            color: var(--gold);
             text-align: center;
+            color: var(--gold);
             background-color: var(--azure);
             border: 1px solid var(--border-light);
             text-shadow: 1px 2px 3px rgba(0, 0, 0, 0.12);
         }
 
-        main>div {
-            margin-bottom: 6px;
+        .hero-title {
+            font-size: clamp(2.2rem, 6vw, 4.2rem);
+            font-weight: 700;
+            line-height: 1.1;
         }
 
-        main>div:last-child {
-            font-size: clamp(1rem, 2vw, 30px);
+        .hero-amp {
+            margin: 4px 0;
+            font-size: clamp(1.5rem, 4vw, 2.4rem);
+            color: var(--gold);
+        }
+
+        .hero-sub {
+            font-size: clamp(1.7rem, 4.5vw, 2.8rem);
+            font-weight: 600;
+        }
+
+        .hero-tagline {
+            max-width: 800px;
+            margin: 12px auto 0;
+            font-size: clamp(1rem, 2vw, 1.35rem);
+            color: var(--black);
             text-shadow: none;
         }
 
@@ -327,16 +349,29 @@
         #email {
             position: relative;
             bottom: 0;
-            padding: 20px;
-            background-color: skyblue;
-            width: 100%;
             display: flex;
+            flex-wrap: wrap;
             justify-content: center;
             align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 20px;
+            background-color: var(--azure);
+            border-top: 1px solid var(--border-light);
         }
 
         .verif {
             margin-left: 5px;
+        }
+
+        /* ---------- Footer ---------- */
+        footer {
+            margin-top: auto;
+            padding: 18px 20px;
+            font-size: 15px;
+            text-align: center;
+            background: linear-gradient(45deg, var(--orange), var(--yellow));
+            border-top: 1px solid var(--border-light);
         }
 
 
@@ -387,17 +422,17 @@
     <nav>
         <div class="logo">Dhyan</div>
         <ul>
-            <li><a href="/">Home</a></li>
+            <li><a href="/" class="active">Home</a></li>
             <li><a href="/tasks">Tasks</a></li>
             <li><a href="/about">About Us</a></li>
             <li><a href="/feedback">FeedBack</a></li>
         </ul>
     </nav>
     <main>
-        <div>Welcome to Dhyan-CERT</div>
-        <div>&</div>
-        <div>Study Tracker</div>
-        <div>Your one-stop solution for study tracking.</div>
+        <div class="hero-title">Welcome to Dhyan-CERT</div>
+        <div class="hero-amp">&</div>
+        <div class="hero-sub">Study Tracker</div>
+        <div class="hero-tagline">Your one-stop solution for study tracking.</div>
     </main>
     <div class="some">
         What do U wanna track today?
@@ -416,6 +451,9 @@
     <div id="email"><label for="email_inp">Enter Your Email to Sync Your Data:</label><input type="email"
             name="email_inp" placeholder="Enter Email" id="sync"><button id="but2" class="verif">Send Code</button>
     </div>
+    <footer>
+        Dhyan-CERT & Study Tracker &copy; 2026 &mdash; Built with Focus & Clarity
+    </footer>
     <script>
         btn = document.getElementById("form");
         btn.addEventListener("change", async (e) => {
@@ -499,8 +537,6 @@
         <button class="bt4" id="But">Track</button>
     </form></div></div>`
             }
-
-
             btn2 = document.getElementById("But");
             btn2.addEventListener("click", async (e) => {
                 e.preventDefault();
@@ -530,6 +566,18 @@
                 }
             });
         });
+        let verification_status_email;
+        let data;
+        let attempt;
+        async function main() {
+            const res = await fetch("/api/verified");
+            data = await res.json();
+            verification_status_email = data.Status;
+            if (data.Status === "Verified") {
+                document.getElementById("email").innerHTML = "Welcome to Dhyan";
+            }
+        }
+        main();
         btn3 = document.getElementById("but2")
         btn3.addEventListener("click", async (e) => {
             e.preventDefault();
@@ -548,14 +596,19 @@
                 const res4 = await fetch("/api/code", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ otp: code_input}),
+                    body: JSON.stringify({ otp: code_input }),
                 });
                 const status = await res4.json()
-                if (status.Status === "Verified") {
+                if (status.Status === "Verified" || verification_status_email === "Verified") {
                     email.innerHTML = "Welcome to Dhyan"
                 }
                 else {
                     email.innerHTML = `<label for="email_inp">Enter Verification Code:</label><input type="number" name="email_inp" placeholder="Enter Verification Code" id="code"><button class="verif" id="but3">Resend otp</button><div>Wrong Code</div>`
+                    resend_btn = document.getElementById("but3")
+                    resend_btn.addEventListener("click",async(e)=>{
+                        e.preventDefault();
+                        
+                    })
                 }
             });
         });
