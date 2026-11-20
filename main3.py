@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request,Response,BackgroundTasks
+from fastapi import FastAPI, Request,Response,BackgroundTasks,HTTPException
 from fastapi.responses import HTMLResponse,RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -10,6 +10,7 @@ import os
 import psycopg2 as p
 import uuid
 import smtplib
+import html
 import secrets
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -271,3 +272,72 @@ def delete(id:primary_key,request:Request,response:Response):
     conn.commit()
     cur.close()
     conn.close()
+
+
+class Feedback(BaseModel):
+    name: str
+    email: str
+    category: str = "General"
+    rating: str | None = None
+    message: str
+
+
+def send_feedback_email(feedback: Feedback):
+    """Turn a feedback form submission into an email and send it to the owner."""
+    rating = f"{feedback.rating}/5" if feedback.rating else "Not rated"
+    safe_name = feedback.name.replace("\r", " ").replace("\n", " ")
+    safe_category = feedback.category.replace("\r", " ").replace("\n", " ")
+    safe_email = feedback.email.replace("\r", "").replace("\n", "")
+
+    text_body = (
+        "New feedback received from the Dhyan-CERT & Study Tracker site\n\n"
+        f"Name:     {feedback.name}\n"
+        f"Email:    {feedback.email}\n"
+        f"Category: {feedback.category}\n"
+        f"Rating:   {rating}\n\n"
+        f"Message:\n{feedback.message}\n"
+    )
+
+    html_body = f"""
+    <div style="font-family: system-ui, sans-serif; color: #111; line-height: 1.6;">
+        <h2 style="margin: 0 0 16px;">New Feedback Received</h2>
+        <table style="border-collapse: collapse;">
+            <tr><td style="padding: 4px 12px 4px 0;"><strong>Name</strong></td><td>{html.escape(feedback.name)}</td></tr>
+            <tr><td style="padding: 4px 12px 4px 0;"><strong>Email</strong></td><td>{html.escape(feedback.email)}</td></tr>
+            <tr><td style="padding: 4px 12px 4px 0;"><strong>Category</strong></td><td>{html.escape(feedback.category)}</td></tr>
+            <tr><td style="padding: 4px 12px 4px 0;"><strong>Rating</strong></td><td>{html.escape(rating)}</td></tr>
+        </table>
+        <h3 style="margin: 20px 0 8px;">Message</h3>
+        <p style="white-space: pre-wrap; margin: 0;">{html.escape(feedback.message)}</p>
+    </div>
+    """
+
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = f"New Feedback: {safe_category} - {safe_name}"
+    msg["From"] = SENDER_EMAIL
+    msg["To"] = SENDER_EMAIL
+    msg["Reply-To"] = safe_email
+
+    msg.attach(MIMEText(text_body, "plain"))
+    msg.attach(MIMEText(html_body, "html"))
+
+    with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+        server.starttls()
+        server.login(SENDER_EMAIL, SENDER_PASSWORD)
+        server.sendmail(SENDER_EMAIL, [SENDER_EMAIL], msg.as_string())
+
+
+@app.post("/api/feedback")
+def submit_feedback(feedback: Feedback):
+    if not feedback.name.strip() or not feedback.email.strip() or not feedback.message.strip():
+        raise HTTPException(status_code=400, detail="Name, email and message are required.")
+    if "@" not in feedback.email or "." not in feedback.email.split("@")[-1]:
+        raise HTTPException(status_code=400, detail="Please enter a valid email address.")
+
+    try:
+        send_feedback_email(feedback)
+    except (smtplib.SMTPException, OSError) as exc:
+        raise HTTPException(status_code=502, detail="Could not send feedback email. Please try again later.") from exc
+
+    return {"Status": "Sent"}
+

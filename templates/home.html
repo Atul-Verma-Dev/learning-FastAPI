@@ -45,6 +45,7 @@
             color: var(--black);
             line-height: 1.5;
             min-height: 100vh;
+            padding-bottom: 96px;
         }
 
         /* ---------- Navigation ---------- */
@@ -347,8 +348,11 @@
         }
 
         #email {
-            position: relative;
+            position: fixed;
+            right: 0;
             bottom: 0;
+            left: 0;
+            z-index: 90;
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
@@ -358,6 +362,7 @@
             padding: 20px;
             background-color: var(--azure);
             border-top: 1px solid var(--border-light);
+            box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.08);
         }
 
         .verif {
@@ -412,6 +417,10 @@
             .bt4 {
                 width: 100%;
                 padding: 12px 16px;
+            }
+
+            body {
+                padding-bottom: 160px;
             }
 
         }
@@ -569,6 +578,19 @@
         const emailBox = document.getElementById("email");
         const emailFormHTML = emailBox.innerHTML;   // saved so "Change Email" can restore it
         let currentEmail = "";
+
+        // Keep enough room at the bottom of the page for the fixed email bar.
+        function reserveEmailBarSpace() {
+            document.body.style.paddingBottom = `${emailBox.offsetHeight}px`;
+        }
+
+        reserveEmailBarSpace();
+
+        if (typeof ResizeObserver !== "undefined") {
+            new ResizeObserver(reserveEmailBarSpace).observe(emailBox);
+        } else {
+            window.addEventListener("resize", reserveEmailBarSpace);
+        }
 
         function showEmailForm() {
             emailBox.innerHTML = emailFormHTML;

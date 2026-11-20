@@ -17,6 +17,7 @@
             --black: black;
             --white: white;
             --antiquewhite: antiquewhite;
+            --danger: firebrick;
             --border-light: rgb(216, 210, 210);
 
             --radius-sm: 6px;
@@ -432,20 +433,59 @@
     <script>
         const form = document.getElementById("feedback-form");
         const status = document.getElementById("form-status");
+        const submitBtn = form.querySelector("button[type='submit']");
 
-        form.addEventListener("submit", (event) => {
+        function setStatus(message, color) {
+            status.textContent = message;
+            status.style.color = color;
+        }
+
+        form.addEventListener("submit", async (event) => {
             event.preventDefault();
 
             if (!form.checkValidity()) {
-                status.textContent = "Please fill in your name, email, and feedback.";
-                status.style.color = "var(--orange)";
+                setStatus("Please fill in your name, email, and feedback.", "var(--danger)");
                 form.reportValidity();
                 return;
             }
 
-            status.textContent = "Thank you! Your feedback has been received.";
-            status.style.color = "var(--yellowgreen)";
-            form.reset();
+            const formData = new FormData(form);
+            const payload = {
+                name: (formData.get("name") || "").trim(),
+                email: (formData.get("email") || "").trim(),
+                category: formData.get("category") || "General",
+                rating: formData.get("rating") || null,
+                message: (formData.get("message") || "").trim(),
+            };
+
+            submitBtn.disabled = true;
+            setStatus("Sending your feedback...", "var(--gray)");
+
+            try {
+                const response = await fetch("/api/feedback", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+
+                let data = {};
+                try {
+                    data = await response.json();
+                } catch (err) {
+                    data = {};
+                }
+
+                if (!response.ok) {
+                    throw new Error(data.detail || "Could not send your feedback.");
+                }
+
+                setStatus("Thank you! Your feedback has been sent.", "var(--yellowgreen)");
+                form.reset();
+            } catch (error) {
+                setStatus(error.message || "Could not send your feedback. Please try again.", "var(--danger)");
+            } finally {
+                submitBtn.disabled = false;
+            }
         });
     </script>
 </body>
