@@ -566,52 +566,72 @@
                 }
             });
         });
-        let verification_status_email;
-        let data;
-        let attempt;
-        async function main() {
-            const res = await fetch("/api/verified");
-            data = await res.json();
-            verification_status_email = data.Status;
-            if (data.Status === "Verified") {
-                document.getElementById("email").innerHTML = "Welcome to Dhyan";
-            }
+        const emailBox = document.getElementById("email");
+        const emailFormHTML = emailBox.innerHTML;   // saved so "Change Email" can restore it
+        let currentEmail = "";
+
+        function showEmailForm() {
+            emailBox.innerHTML = emailFormHTML;
+            document.getElementById("but2").addEventListener("click", sendCode);
         }
-        main();
-        btn3 = document.getElementById("but2")
-        btn3.addEventListener("click", async (e) => {
-            e.preventDefault();
-            let email_input = document.getElementById("sync").value
-            const res3 = await fetch("/api/email_id", {
+
+        function showCodeForm(msg = "") {
+            emailBox.innerHTML = `
+        <label for="code">Enter Verification Code:</label>
+        <input type="number" placeholder="Enter Verification Code" id="code">
+        <button class="verif" id="but3">Verify Me</button>
+        <button class="verif" id="resend">Resend Code</button>
+        <button class="verif" id="change">Change Email</button>
+        <div id="msg"></div>`;
+            document.getElementById("msg").textContent = msg;
+            document.getElementById("but3").addEventListener("click", verifyCode);
+            document.getElementById("resend").addEventListener("click", resendCode);
+            document.getElementById("change").addEventListener("click", showEmailForm);
+        }
+
+        async function postEmail(okMsg) {
+            const res = await fetch("/api/email_id", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email_id: email_input }),
+                body: JSON.stringify({ email_id: currentEmail }),
             });
-            let email = document.getElementById("email");
-            email.innerHTML = `<label for="email_inp">Enter Verification Code:</label><input type="number" name="email_inp" placeholder="Enter Verification Code" id="code"><button class="verif" id="but3">Verify Me</button>`
-            btn4 = document.getElementById("but3");
-            btn4.addEventListener("click", async (e) => {
-                e.preventDefault();
-                code_input = document.getElementById("code").value
-                const res4 = await fetch("/api/code", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ otp: code_input }),
-                });
-                const status = await res4.json()
-                if (status.Status === "Verified" || verification_status_email === "Verified") {
-                    email.innerHTML = "Welcome to Dhyan"
-                }
-                else {
-                    email.innerHTML = `<label for="email_inp">Enter Verification Code:</label><input type="number" name="email_inp" placeholder="Enter Verification Code" id="code"><button class="verif" id="but3">Resend otp</button><div>Wrong Code</div>`
-                    resend_btn = document.getElementById("but3")
-                    resend_btn.addEventListener("click",async(e)=>{
-                        e.preventDefault();
-                        
-                    })
-                }
+            const d = await res.json();
+            showCodeForm(d.Status === "Limit" ? "Too many codes requested. Try again later." : okMsg);
+        }
+
+        async function sendCode(e) {
+            e.preventDefault();
+            currentEmail = document.getElementById("sync").value;
+            await postEmail("Code sent to " + currentEmail);
+        }
+
+        async function resendCode(e) {
+            e.preventDefault();
+            await postEmail("New code sent.");
+        }
+
+        async function verifyCode(e) {
+            e.preventDefault();
+            const res = await fetch("/api/code", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ otp: document.getElementById("code").value }),
             });
-        });
+            const d = await res.json();
+            if (d.Status === "Verified") emailBox.innerHTML = "Welcome to Dhyan";
+            else if (d.Status === "Wrong") showCodeForm(`Wrong code. ${d.left} attempts left.`);
+            else if (d.Status === "Expired") showCodeForm("Code expired. Click Resend Code.");
+            else showCodeForm("Too many wrong attempts. Click Resend Code.");
+        }
+
+        async function main() {
+            const res = await fetch("/api/verified");
+            const data = await res.json();
+            if (data.Status === "Verified") emailBox.innerHTML = "Welcome to Dhyan";
+        }
+
+        document.getElementById("but2").addEventListener("click", sendCode);
+        main();
     </script>
 </body>
 

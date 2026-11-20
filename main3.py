@@ -14,6 +14,7 @@ import secrets
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import secrets
+import time
 
 app = FastAPI()
 
@@ -31,21 +32,20 @@ SENDER_PASSWORD = APP_PASSWORD
 
 z = {}
 
-def send_smtp_otp(to_email: str,session_id):
+def send_smtp_otp(to_email: str, session_id):
+    code = str(secrets.randbelow(90000) + 10000)
+    z[session_id]["code"] = code
+    z[session_id]["expires_at"] = time.time() + 300   # 5 minutes
+    z[session_id]["attempts"] = 0
     msg = MIMEMultipart("alternative")
-    code = str(secrets.randbelow(90000)+10000)
     msg["Subject"] = f"Your Sync Code: {code}"
     msg["From"] = SENDER_EMAIL
     msg["To"] = to_email
-
-    html_content = f"<p>Your verification code is: <b>{code}</b></p>"
-    msg.attach(MIMEText(html_content, "html"))
-
+    msg.attach(MIMEText(f"<p>Your verification code is: <b>{code}</b></p>", "html"))
     with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
-        server.starttls()  # Secure connection
+        server.starttls()
         server.login(SENDER_EMAIL, SENDER_PASSWORD)
         server.sendmail(SENDER_EMAIL, to_email, msg.as_string())
-    z[session_id]["code"] = code
 
 templates = Jinja2Templates(directory="templates")
 
@@ -74,7 +74,7 @@ def get_or_set_session_id(request: Request, response: Response) -> str:
             max_age=60 * 60 * 24 * 365
         )
 
-    if session_id not in z:              # add these two lines
+    if session_id not in z:             
         z[session_id] = {"status": 0}
 
     return session_id
@@ -161,32 +161,39 @@ class email_input(BaseModel):
     email_id:str
 
 @app.post("/api/email_id")
-async def get_email_id(email:email_input,background_tasks: BackgroundTasks,request: Request,response:Response):
-    x = get_or_set_session_id(request,response)
-    y = email.email_id
-    z[x]["email"] = y
-    background_tasks.add_task(send_smtp_otp,y,x)
-    return y
+async def get_email_id(email: email_input, background_tasks: BackgroundTasks, request: Request, response: Response):
+    x = get_or_set_session_id(request, response)
+    z[x]["sends"] = z[x].get("sends", 0) + 1
+    if z[x]["sends"] > 3:
+        return {"Status": "Limit"}
+    z[x]["email"] = email.email_id
+    background_tasks.add_task(send_smtp_otp, email.email_id, x)
+    return {"Status": "Sent"}
 
 class otp_js(BaseModel):
     otp:str
 
 @app.post("/api/code")
-def rec_code_from_js(otp:otp_js,request: Request,response:Response):
-    x = get_or_set_session_id(request,response)
-    if otp.otp == z.get(x).get("code"):
-        z[x]["status"] = 1
+def rec_code_from_js(otp: otp_js, request: Request, response: Response):
+    x = get_or_set_session_id(request, response)
+    s = z[x]
+    print("typed:", repr(otp.otp), "stored:", repr(s.get("code")))
+    if s.get("attempts", 0) >= 5:
+        return {"Status": "Locked"}
+    if time.time() > s.get("expires_at", 0):
+        return {"Status": "Expired"}
+    if otp.otp.strip() == s.get("code"):
+        s["status"] = 1
         conn = p.connect(DATABASE_URL, connect_timeout=10)
         cur = conn.cursor()
-        cur.execute("UPDATE Data SET email_or_uuid = %s WHERE email_or_uuid = %s",(z.get(x).get("email"),x))
+        cur.execute("UPDATE Data SET email_or_uuid = %s WHERE email_or_uuid = %s", (s.get("email"), x))
         conn.commit()
         cur.close()
         conn.close()
-        z[x]["verification_status"] = "Verified"
-        return{"Status":"Verified"}
-    else:
-        z[x]["verification_status"] = "Unverified"
-        return{"Status":"Not Verified"}
+        s["verification_status"] = "Verified"
+        return {"Status": "Verified"}
+    s["attempts"] = s.get("attempts", 0) + 1
+    return {"Status": "Wrong", "left": 5 - s["attempts"]}
 
 
 @app.get("/api/verified")
